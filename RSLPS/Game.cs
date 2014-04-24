@@ -20,12 +20,17 @@ namespace RSLPS
         }
         public enum WinningActions
         {
-            cut, covers, crushes, poisons, smashes, decapitate, eats, disproves, vaporizes
+            cut, covers, crushes, poisons, smashes, decapitate, eats, disproves, vaporizes, tie
         }
         public enum Results
         {
             ComputerWin, HumanWin, Tie
         }
 
+        public static List<Decision> PossibleOutcomes = new List<Decision>()
+            {
+                new Decision { HumanWeapon = Game.HandWeapons.Rock, AIWeapon = Game.HandWeapons.Rock, MatchResult = Game.Results.Tie, TimesPlayed = 0, WeaponCry = Game.WinningActions.tie},
+                new Decision { HumanWeapon = Game.HandWeapons.Paper, AIWeapon = Game.HandWeapons.Lizard, MatchResult = Game.Results.ComputerWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.decapitate}
+            };
     }
 }

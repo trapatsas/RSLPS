@@ -16,3 +16,9 @@ C:\Users\Panayotis\Desktop\RSLPS\RSLPS\obj\Debug\RSLPS.pdb
 C:\Users\Panayotis\Desktop\RSLPS\RSLPS\obj\Debug\RSLPS.csprojResolveAssemblyReference.cache
 C:\Users\Panayotis\Desktop\RSLPS\RSLPS\bin\Debug\RSLPS.exe
 C:\Users\Panayotis\Desktop\RSLPS\RSLPS\bin\Debug\RSLPS.pdb
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\bin\Debug\RSLPS.exe.config
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\obj\Debug\RSLPS.exe
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\obj\Debug\RSLPS.pdb
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\bin\Debug\RSLPS.exe
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\bin\Debug\RSLPS.pdb
+C:\Users\p.trapatsas\Source\Repos\RSLPS\RSLPS\obj\Debug\RSLPS.csprojResolveAssemblyReference.cache

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace RSLPS
@@ -13,7 +14,7 @@ namespace RSLPS
             while (input.ToUpper() != "Q")
             {
                 Console.WriteLine("");
-                Console.WriteLine("╔======================================================================╗");
+                Console.WriteLine("╔======================== New game round {0} ============================╗", Game.TotalGames + 1);
                 Console.WriteLine("║ Please select a weapon                                               ║");
                 Console.WriteLine("║ Rock (R)- Paper (P)- Scissors(Sc) - Lizard (Li) - Spock (Sp)         ║");
                 Console.WriteLine("║ or type \"Q\" to quit!                                                 ║");
@@ -69,16 +70,21 @@ namespace RSLPS
 
             Round newRound = new Round(userChoice);
 
+            string winner = "";
+
             switch (newRound.RoundResult)
             {
                 case Game.Results.ComputerWin:
                     Game.ComputerWins++;
+                    winner = string.Format("║ {0} does {1}. You Lost!", newRound.ComputerWeapon.Name, userChoice.Name);
                     break;
                 case Game.Results.HumanWin:
                     Game.HumanWins++;
+                    winner = string.Format("║ {1} does {0}. You Win!", newRound.ComputerWeapon.Name, userChoice.Name);
                     break;
                 case Game.Results.Tie:
                     Game.Ties++;
+                    winner = string.Format("║ The game is a tie. Let's go again!");
                     break;
                 default:
                     break;
@@ -92,9 +98,10 @@ namespace RSLPS
             string ComputerWins = string.Format("║ Computer Wins: {0} ({1}%).", Game.ComputerWins, (Game.ComputerWins / Game.TotalGames) * 100);
             string HumanWins = string.Format("║ Human Wins: {0} ({1}%).", Game.HumanWins, (Game.HumanWins / Game.TotalGames) * 100);
             string Ties = string.Format("║ Ties: {0} ({1}%).", Game.Ties, (Game.Ties / Game.TotalGames) * 100);
-            Console.WriteLine("╔==================================╗");
+            Console.WriteLine("╔============ Results =============╗");
             Console.WriteLine(PlayerPick);
             Console.WriteLine(ComputerPick);
+            Console.WriteLine(winner);
             Console.WriteLine(TotalGamesPlayed);
             Console.WriteLine(ComputerWins);
             Console.WriteLine(HumanWins);
