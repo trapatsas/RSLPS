@@ -20,7 +20,6 @@ namespace RSLPS
         {
             this.HumanWeapon = userChoice;
             this.ComputerWeapon = new Weapon((Game.HandWeapons)values.GetValue(random.Next(values.Length)));
-
             #region QuickResult
             //if (this.ComputerWeapon.Name == this.HumanWeapon.Name)
             //{
@@ -35,13 +34,10 @@ namespace RSLPS
             //    this.RoundResult = Game.Results.HumanWin;
             //}
             #endregion
-
-            this.RoundResult = fight(this.HumanWeapon.Name, this.ComputerWeapon.Name);
-        }
-
-        private Game.Results fight(Game.HandWeapons w1, Game.HandWeapons w2)
-        {
-            return Game.Results.Tie;
+            Decision matchOutcome = Game.PossibleOutcomes.Find(item => item.HumanWeapon == userChoice.Name && item.AIWeapon == this.ComputerWeapon.Name);
+            this.WeaponCry = matchOutcome.WeaponCry;
+            this.RoundResult = matchOutcome.MatchResult;
+            matchOutcome.TimesPlayed++;
         }
     }
 }
