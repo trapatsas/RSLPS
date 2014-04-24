@@ -33,7 +33,7 @@ namespace RSLPS
                     , MatchResult = Game.Results.HumanWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.crushes},
                 new Decision { HumanWeapon = Game.HandWeapons.Paper, AIWeapon = Game.HandWeapons.Rock
                     , MatchResult = Game.Results.HumanWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.covers},
-                new Decision { HumanWeapon = Game.HandWeapons.Rock, AIWeapon = Game.HandWeapons.Lizard
+                new Decision { HumanWeapon = Game.HandWeapons.Scissors, AIWeapon = Game.HandWeapons.Paper
                     , MatchResult = Game.Results.HumanWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.crushes},
                 new Decision { HumanWeapon = Game.HandWeapons.Lizard, AIWeapon = Game.HandWeapons.Spock
                     , MatchResult = Game.Results.HumanWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.poisons},
@@ -53,7 +53,7 @@ namespace RSLPS
                     , MatchResult = Game.Results.ComputerWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.crushes},
                 new Decision { AIWeapon = Game.HandWeapons.Paper, HumanWeapon = Game.HandWeapons.Rock
                     , MatchResult = Game.Results.ComputerWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.covers},
-                new Decision { AIWeapon = Game.HandWeapons.Rock, HumanWeapon = Game.HandWeapons.Lizard
+                new Decision { AIWeapon = Game.HandWeapons.Scissors, HumanWeapon = Game.HandWeapons.Paper
                     , MatchResult = Game.Results.ComputerWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.crushes},
                 new Decision { AIWeapon = Game.HandWeapons.Lizard, HumanWeapon = Game.HandWeapons.Spock
                     , MatchResult = Game.Results.ComputerWin, TimesPlayed = 0, WeaponCry = Game.WinningActions.poisons},
