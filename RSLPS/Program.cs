@@ -166,6 +166,7 @@ namespace RSLPS
             ComputerWin, HumanWin, Tie
         }
 
+        #region Decision Table
         public static List<Decision> PossibleOutcomes = new List<Decision>()
             {
                 new Decision { HumanWeapon = Game.HandWeapons.Rock, AIWeapon = Game.HandWeapons.Lizard
@@ -219,6 +220,7 @@ namespace RSLPS
                 new Decision { AIWeapon = Game.HandWeapons.Rock, HumanWeapon = Game.HandWeapons.Rock
                     , MatchResult = Game.Results.Tie, TimesPlayed = 0, WeaponCry = Game.WinningActions.tie}
             };
+        #endregion
     }
     class Round
     {
