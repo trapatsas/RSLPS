@@ -2,11 +2,47 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace RSLPS
 {
     class Program
     {
+        private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
+        public static byte RollDice(byte numberSides)
+        {
+            if (numberSides <= 0)
+                throw new ArgumentOutOfRangeException("numberSides");
+
+            // Create a byte array to hold the random value. 
+            byte[] randomNumber = new byte[1];
+            do
+            {
+                // Fill the array with a random value.
+                rngCsp.GetBytes(randomNumber);
+            }
+            while (!IsFairRoll(randomNumber[0], numberSides));
+            // Return the random number mod the number 
+            // of sides.  The possible values are zero- 
+            // based, so we DO NOT add one. 
+            return (byte)((randomNumber[0] % numberSides));
+        }
+
+        private static bool IsFairRoll(byte roll, byte numSides)
+        {
+            // There are MaxValue / numSides full sets of numbers that can come up 
+            // in a single byte.  For instance, if we have a 6 sided die, there are 
+            // 42 full sets of 1-6 that come up.  The 43rd set is incomplete. 
+            int fullSetsOfValues = Byte.MaxValue / numSides;
+
+            // If the roll is within this range of fair values, then we let it continue. 
+            // In the 6 sided die case, a roll between 0 and 251 is allowed.  (We use 
+            // < rather than <= since the = portion allows through an extra 0 value). 
+            // 252 through 255 would provide an extra 0, 1, 2, 3 so they are not fair 
+            // to use. 
+            return roll < numSides * fullSetsOfValues;
+        }
+
         static void Main(string[] args)
         {
             Game.GameMode CurrentMode = Game.GameMode.Learning;
@@ -39,7 +75,7 @@ namespace RSLPS
             Console.WriteLine("║    or type \"Q\" to quit!      ║");
             Console.WriteLine("╚==============================╝");
             Console.WriteLine("");
-
+            bool auto;
             string input = "";
             Weapon userChoice = null;
 
@@ -49,7 +85,7 @@ namespace RSLPS
                 Console.WriteLine(" =============> Round {0} <=============", Game.TotalGames + 1);
                 Console.Write("Type your choice: ");
                 input = Console.ReadLine();
-
+                auto = false;
                 switch (input.ToUpper()) //Switch on Key enum
                 {
                     case "0":
@@ -86,20 +122,37 @@ namespace RSLPS
                     case "SPOCK":
                         userChoice = new Weapon(Game.HandWeapons.Spock);
                         break;
+                    case "AI":
+                        auto = true;
+                        Console.WriteLine("AI vs AI mode activated!");
+                        break;
                     default:
                         userChoice = null;
                         Console.WriteLine("*** Invalid choice. You can only type: R, SC, L, P and SP here! ***");
                         break;
                 }
-                if (userChoice != null) BeginRound(userChoice, CurrentMode);
+                if (userChoice != null) BeginRound(userChoice, CurrentMode, auto);
+                int bigi = 0;
+                int LOOPS = 100000;
+                if (auto && userChoice == null)
+                {
+                    while (bigi < LOOPS)
+                    {
+                        BeginRound(userChoice, CurrentMode, auto);
+                        bigi++;
+                    }
+                }
+
             }
+            rngCsp.Dispose();
         }
 
-        private static void BeginRound(Weapon userChoice, Game.GameMode CurrentMode)
+        private static void BeginRound(Weapon userChoice, Game.GameMode CurrentMode, bool a)
         {
             Game.TotalGames++;
 
-            Round newRound = new Round(userChoice);
+        int i = Enum.GetValues(typeof(Game.HandWeapons)).Length;
+        Round newRound = new Round(userChoice, RollDice((byte)i));
 
             string winner = "";
 
@@ -107,11 +160,11 @@ namespace RSLPS
             {
                 case Game.Results.ComputerWin:
                     Game.ComputerWins++;
-                    winner = string.Format("{0} {2} {1}. You Lost!", newRound.ComputerWeapon.Name, userChoice.Name, newRound.WeaponCry);
+                    winner = string.Format("{0} {2} {1}. You Lost!", newRound.ComputerWeapon.Name, newRound.HumanWeapon.Name, newRound.WeaponCry);
                     break;
                 case Game.Results.HumanWin:
                     Game.HumanWins++;
-                    winner = string.Format("{1} {2} {0}. You Win!", newRound.ComputerWeapon.Name, userChoice.Name, newRound.WeaponCry);
+                    winner = string.Format("{1} {2} {0}. You Win!", newRound.ComputerWeapon.Name, newRound.HumanWeapon.Name, newRound.WeaponCry);
                     break;
                 case Game.Results.Tie:
                     Game.Ties++;
@@ -122,24 +175,33 @@ namespace RSLPS
             }
 
 
-            string PlayerPick = string.Format("Player Picks {0}", userChoice.Name);
+            string PlayerPick = string.Format("Player Picks {0}", newRound.HumanWeapon.Name);
             string ComputerPick = string.Format("Computer Picks {0}", newRound.ComputerWeapon.Name);
 
             string TotalGamesPlayed = string.Format("Total Games played: {0}.", Game.TotalGames);
             string ComputerWins = string.Format("Computer Wins: {0} ({1:0.00}%).", Game.ComputerWins, ((decimal)Game.ComputerWins / (decimal)Game.TotalGames) * 100);
             string HumanWins = string.Format("Human Wins: {0} ({1:0.00}%).", Game.HumanWins, ((float)Game.HumanWins / (float)Game.TotalGames) * 100);
             string Ties = string.Format("Ties: {0} ({1:0.00}%).", Game.Ties, ((decimal)Game.Ties / (decimal)Game.TotalGames) * 100);
-            Console.WriteLine(" >>>>> Round Results <<<<<");
-            Console.WriteLine(string.Format("{0} and {1}.", PlayerPick, ComputerPick));
-            Console.WriteLine("");
-            Console.WriteLine(winner);
-            Console.WriteLine("");
-            Console.WriteLine(string.Format("Game Mode: {0} AI", CurrentMode.ToString()));
-            Console.WriteLine(" >>>>> Some Stats <<<<<");
-            Console.WriteLine(TotalGamesPlayed);
-            Console.WriteLine(ComputerWins);
-            Console.WriteLine(HumanWins);
-            Console.WriteLine(Ties);
+
+            if (a)
+            {
+                Console.WriteLine(TotalGamesPlayed);
+            }
+            else
+            {
+                Console.WriteLine(" >>>>> Round Results <<<<<");
+                Console.WriteLine(string.Format("{0} and {1}.", PlayerPick, ComputerPick));
+                Console.WriteLine("");
+                Console.WriteLine(winner);
+                Console.WriteLine("");
+                Console.WriteLine(string.Format("Game Mode: {0} AI", CurrentMode.ToString()));
+                Console.WriteLine(" >>>>> Some Stats <<<<<");
+                Console.WriteLine(TotalGamesPlayed);
+                Console.WriteLine(ComputerWins);
+                Console.WriteLine(HumanWins);
+                Console.WriteLine(Ties);
+            }
+
         }
     }
     public static class Game
@@ -151,7 +213,7 @@ namespace RSLPS
 
         public enum GameMode
         {
-            Learning, Random
+            Learning, Random, Human, AlwaysRock
         }
         public enum HandWeapons
         {
@@ -232,21 +294,49 @@ namespace RSLPS
         Random random = new Random();
         Array values = Enum.GetValues(typeof(Game.HandWeapons));
 
-        public Round(Weapon userChoice)
+        public Round(Weapon userChoice, int rnd)
         {
-            this.HumanWeapon = userChoice;
-            this.ComputerWeapon = LearningAI();
-            Decision matchOutcome = AIDecision(userChoice);
+            Weapon[] Arsenal = { 
+                                   userChoice            // # 0.
+                                   , LearningAI()        // # 1.
+                                   , RandomAI()          // # 2.
+                                   , AlwaysChooseRock()  // # 3.
+                                   , DoNotSelectSpock()  // # 4.
+                                   , TrueRandomAI(rnd)   // # 5.
+                               };
+
+            this.HumanWeapon = Arsenal[3];
+            this.ComputerWeapon = Arsenal[4]; // #1 Always here
+            Decision matchOutcome = AIDecision(this.HumanWeapon, this.ComputerWeapon);
             this.WeaponCry = matchOutcome.WeaponCry;
             this.RoundResult = matchOutcome.MatchResult;
             matchOutcome.TimesPlayed++;
         }
-
+        // #2
         private Weapon RandomAI()
         {
             return new Weapon((Game.HandWeapons)values.GetValue(random.Next(values.Length)));
         }
-
+        // #5
+        private Weapon TrueRandomAI(int r)
+        {
+            return new Weapon((Game.HandWeapons)values.GetValue(r));
+        }
+        // #4
+        private Weapon DoNotSelectSpock()
+        {
+            Game.HandWeapons[] localvalues = { Game.HandWeapons.Rock, Game.HandWeapons.Lizard, Game.HandWeapons.Paper };
+            var l = localvalues.Length;
+            var n = random.Next(l);
+            var x = localvalues.GetValue(n);
+            return new Weapon((Game.HandWeapons)x);
+        }
+        // #3
+        private Weapon AlwaysChooseRock()
+        {
+            return new Weapon(Game.HandWeapons.Rock);
+        }
+        // #1
         private Weapon LearningAI()
         {
             Dictionary<string, int> t = new Dictionary<string, int>();
@@ -262,9 +352,9 @@ namespace RSLPS
             return new Weapon(d.AIWeapon);
         }
 
-        private Decision AIDecision(Weapon userChoice)
+        private Decision AIDecision(Weapon HuChoice, Weapon AiChoice)
         {
-            return Game.PossibleOutcomes.Find(item => item.HumanWeapon == userChoice.Name && item.AIWeapon == this.ComputerWeapon.Name);
+            return Game.PossibleOutcomes.Find(item => item.HumanWeapon == HuChoice.Name && item.AIWeapon == AiChoice.Name);
         }
     }
     public class Decision
